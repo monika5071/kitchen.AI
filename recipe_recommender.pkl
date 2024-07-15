@@ -1,0 +1,24 @@
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+import pickle
+
+# Load recipe data
+df = pd.read_csv('data/cleaned_recipes.csv')
+
+# Recipe Recommender Class
+class RecipeRecommender:
+    def __init__(self, recipe_data):
+        self.recipe_data = recipe_data
+        self.vectorizer = TfidfVectorizer()
+        self.tfidf_matrix = self.vectorizer.fit_transform(recipe_data['ingredients'])
+
+    def recommend(self, ingredients):
+        user_vector = self.vectorizer.transform([ingredients])
+        similarity_scores = cosine_similarity(user_vector, self.tfidf_matrix)
+        top_indices = similarity_scores.argsort().flatten()[-5:]
+        return self.recipe_data.iloc[top_indices].to_dict('records')
+
+# Save recommender model
+recommender = RecipeRecommender(df)
+with open('models/recipe_recommender.pkl', 'wb') as f:
+    pickle.dump(recommender, f)

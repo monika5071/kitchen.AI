@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Kitchen</title>
+  </head>
+  <body>
+    <h1>Welcome to AI Kitchen</h1>
+    <form action="/recommend" method="post">
+      <label for="ingredients">Enter Ingredients:</label>
+      <input type="text" id="ingredients" name="ingredients" />
+      <button type="submit">Get Recipes</button>
+    </form>
+    <div id="recommendations"></div>
+    <script>
+      document.querySelector('form').onsubmit = async (e) => {
+        e.preventDefault();
+        const response = await fetch('/recommend', {
+          method: 'POST',
+          body: new URLSearchParams(new FormData(e.target)),
+        });
+        const recommendations = await response.json();
+        document.getElementById('recommendations').innerHTML = JSON.stringify(
+          recommendations,
+          null,
+          2
+        );
+      };
+    </script>
+  </body>
+</html>
